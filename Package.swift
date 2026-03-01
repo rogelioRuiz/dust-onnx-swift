@@ -4,7 +4,6 @@ import PackageDescription
 let package = Package(
     name: "dust-onnx-swift",
     platforms: [.iOS(.v16), .macOS(.v13)],
-    swiftLanguageVersions: [.v5],
     products: [
         .library(
             name: "DustOnnx",
@@ -30,5 +29,6 @@ let package = Package(
                 .copy("Fixtures/tiny-test.onnx"),
             ]
         )
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )
