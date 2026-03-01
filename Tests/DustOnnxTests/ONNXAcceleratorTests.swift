@@ -2,13 +2,18 @@ import XCTest
 @testable import DustOnnx
 import DustCore
 
+private final class Box<T>: @unchecked Sendable {
+    var value: T
+    init(_ value: T) { self.value = value }
+}
+
 final class ONNXAcceleratorTests: XCTestCase {
     func testO4T1AutoAcceleratorConfigReachesInjectedFactory() throws {
         let fixtureURL = try fixtureURL()
-        var capturedAccelerator: String?
+        let capturedAccelerator = Box<String?>(nil)
         let manager = ONNXSessionManager(
             sessionFactory: { _, modelId, config, priority in
-                capturedAccelerator = config.accelerator
+                capturedAccelerator.value = config.accelerator
                 return ONNXSession(
                     sessionId: modelId,
                     metadata: Self.metadata(accelerator: config.accelerator),
@@ -24,7 +29,7 @@ final class ONNXAcceleratorTests: XCTestCase {
             priority: .interactive
         )
 
-        XCTAssertEqual(capturedAccelerator, "auto")
+        XCTAssertEqual(capturedAccelerator.value, "auto")
         XCTAssertEqual(session.metadata.accelerator, "auto")
     }
 
@@ -52,10 +57,10 @@ final class ONNXAcceleratorTests: XCTestCase {
 
     func testO4T3CoreMLAcceleratorPropagatesThroughInjectedFactory() throws {
         let fixtureURL = try fixtureURL()
-        var capturedAccelerator: String?
+        let capturedAccelerator = Box<String?>(nil)
         let manager = ONNXSessionManager(
             sessionFactory: { _, modelId, config, priority in
-                capturedAccelerator = config.accelerator
+                capturedAccelerator.value = config.accelerator
                 return ONNXSession(
                     sessionId: modelId,
                     metadata: Self.metadata(accelerator: "coreml"),
@@ -71,7 +76,7 @@ final class ONNXAcceleratorTests: XCTestCase {
             priority: .interactive
         )
 
-        XCTAssertEqual(capturedAccelerator, "coreml")
+        XCTAssertEqual(capturedAccelerator.value, "coreml")
         XCTAssertEqual(session.metadata.accelerator, "coreml")
     }
 
@@ -129,10 +134,10 @@ final class ONNXAcceleratorTests: XCTestCase {
 
     func testO4T6FactoryFailurePropagatesWithoutRetry() throws {
         let fixtureURL = try fixtureURL()
-        var callCount = 0
+        let callCount = Box(0)
         let manager = ONNXSessionManager(
             sessionFactory: { path, _, _, _ in
-                callCount += 1
+                callCount.value += 1
                 throw ONNXError.loadFailed(path: path, detail: "simulated failure")
             }
         )
@@ -152,16 +157,16 @@ final class ONNXAcceleratorTests: XCTestCase {
             XCTAssertEqual(detail, "simulated failure")
         }
 
-        XCTAssertEqual(callCount, 1)
+        XCTAssertEqual(callCount.value, 1)
         XCTAssertNil(manager.session(for: "failing-model"))
     }
 
     func testO4T7MetalAcceleratorPassesThroughToInjectedFactory() throws {
         let fixtureURL = try fixtureURL()
-        var capturedAccelerator: String?
+        let capturedAccelerator = Box<String?>(nil)
         let manager = ONNXSessionManager(
             sessionFactory: { _, modelId, config, priority in
-                capturedAccelerator = config.accelerator
+                capturedAccelerator.value = config.accelerator
                 return ONNXSession(
                     sessionId: modelId,
                     metadata: Self.metadata(accelerator: config.accelerator),
@@ -177,7 +182,7 @@ final class ONNXAcceleratorTests: XCTestCase {
             priority: .interactive
         )
 
-        XCTAssertEqual(capturedAccelerator, "metal")
+        XCTAssertEqual(capturedAccelerator.value, "metal")
         XCTAssertEqual(session.metadata.accelerator, "metal")
     }
 
