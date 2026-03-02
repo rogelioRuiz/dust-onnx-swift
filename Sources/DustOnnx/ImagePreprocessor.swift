@@ -161,7 +161,7 @@ public struct ImagePreprocessor {
                     Double(pixelBuffer[pixelOffset + 1]),
                     Double(pixelBuffer[pixelOffset + 2]),
                 ]
-                let tensorIndex = (y * width) + x
+                let tensorIndex = ((height - 1 - y) * width) + x
 
                 for channel in 0..<3 {
                     output[channel * planeSize + tensorIndex] = try normalize(
