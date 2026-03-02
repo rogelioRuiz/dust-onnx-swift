@@ -1,7 +1,12 @@
 import Foundation
 
-#if canImport(onnxruntime_objc)
+#if canImport(OnnxRuntimeBindings)
+import OnnxRuntimeBindings
+#elseif canImport(onnxruntime_objc)
 import onnxruntime_objc
+#endif
+
+#if canImport(OnnxRuntimeBindings) || canImport(onnxruntime_objc)
 
 final class ORTSessionEngine: ONNXEngine {
     let inputMetadata: [ONNXTensorMetadata]

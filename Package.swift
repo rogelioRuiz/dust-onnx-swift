@@ -12,12 +12,14 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/rogelioRuiz/dust-core-swift.git", from: "0.1.0"),
+        .package(url: "https://github.com/microsoft/onnxruntime-swift-package-manager.git", from: "1.20.0"),
     ],
     targets: [
         .target(
             name: "DustOnnx",
             dependencies: [
                 .product(name: "DustCore", package: "dust-core-swift"),
+                .product(name: "onnxruntime", package: "onnxruntime-swift-package-manager"),
             ],
             path: "Sources/DustOnnx"
         ),

@@ -1,7 +1,9 @@
 import Foundation
 import DustCore
 
-#if canImport(onnxruntime_objc)
+#if canImport(OnnxRuntimeBindings)
+import OnnxRuntimeBindings
+#elseif canImport(onnxruntime_objc)
 import onnxruntime_objc
 #endif
 

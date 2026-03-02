@@ -1,7 +1,9 @@
 import Foundation
 import DustCore
 
-#if canImport(onnxruntime_objc)
+#if canImport(OnnxRuntimeBindings)
+import OnnxRuntimeBindings
+#elseif canImport(onnxruntime_objc)
 import onnxruntime_objc
 #endif
 
@@ -13,12 +15,12 @@ public enum MemoryPressureLevel {
 final class ORTEnvironmentSingleton {
     static let shared = ORTEnvironmentSingleton()
 
-    #if canImport(onnxruntime_objc)
+    #if canImport(OnnxRuntimeBindings) || canImport(onnxruntime_objc)
     let env: ORTEnv?
     #endif
 
     private init() {
-        #if canImport(onnxruntime_objc)
+        #if canImport(OnnxRuntimeBindings) || canImport(onnxruntime_objc)
         env = try? ORTEnv(loggingLevel: .warning)
         #endif
     }
@@ -53,7 +55,7 @@ public final class ONNXSessionManager: DustModelServer, @unchecked Sendable {
                     throw ONNXError.fileNotFound(path: path)
                 }
 
-                #if canImport(onnxruntime_objc)
+                #if canImport(OnnxRuntimeBindings) || canImport(onnxruntime_objc)
                 guard let env = ORTEnvironmentSingleton.shared.env else {
                     throw ONNXError.loadFailed(path: path, detail: "onnxruntime-objc environment is unavailable")
                 }

@@ -1,8 +1,13 @@
 import Foundation
 
-#if canImport(onnxruntime_objc)
-import ObjectiveC.runtime
+#if canImport(OnnxRuntimeBindings)
+import OnnxRuntimeBindings
+#elseif canImport(onnxruntime_objc)
 import onnxruntime_objc
+#endif
+import ObjectiveC.runtime
+
+#if canImport(OnnxRuntimeBindings) || canImport(onnxruntime_objc)
 
 struct AcceleratorResult {
     let options: ORTSessionOptions
