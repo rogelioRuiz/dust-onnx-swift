@@ -420,3 +420,14 @@ private struct CachedSession {
     var refCount: Int
     var lastAccessTime: UInt64
 }
+
+// MARK: - DustModelSessionFactory
+
+extension ONNXSessionManager: DustModelSessionFactory {
+    public func makeSession(
+        descriptor: DustModelDescriptor,
+        priority: DustSessionPriority
+    ) async throws -> any DustModelSession {
+        return try await loadModel(descriptor: descriptor, priority: priority)
+    }
+}
